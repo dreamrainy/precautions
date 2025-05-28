@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抜歯後の注意事項</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .slideshow-container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            text-align: center;
+            min-height: 600px;
+            position: relative;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        .slide h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .slide h2 {
+            color: #3498db;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .slide h3 {
+            color: #e74c3c;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .slide p, .slide li {
+            color: #34495e;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .slide ul {
+            text-align: left;
+            max-width: 700px;
+            margin: 0 auto;
+            list-style: none;
+        }
+
+        .slide li {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 25px;
+        }
+
+        .slide li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .highlight-box {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: #fff5f5;
+            border: 2px solid #feb2b2;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .controls {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin: 0 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.play-btn {
+            background: #27ae60;
+            font-size: 1.2rem;
+            padding: 15px 30px;
+        }
+
+        .btn.play-btn:hover {
+            background: #219a52;
+        }
+
+        .btn.pause-btn {
+            background: #e74c3c;
+        }
+
+        .btn.pause-btn:hover {
+            background: #c0392b;
+        }
+
+        .time-display {
+            color: #7f8c8d;
+            font-size: 1rem;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .medical-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #3498db;
+        }
+
+        .step-number {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        /* 동영상을 오른쪽 하단에 작고 둥글게 */
+        .video-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            background: #2c3e50;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .video-container:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-container:hover .video-overlay {
+            opacity: 1;
+        }
+
+        .video-container.paused .video-overlay {
+            opacity: 1;
+            background: rgba(0,0,0,0.6);
+        }
+
+        /* 슬라이드 내용 부드럽게 나타나기 */
+        .slide-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .slide.active .slide-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-content.delayed-1 {
+            transition-delay: 0.2s;
+        }
+
+        .slide-content.delayed-2 {
+            transition-delay: 0.4s;
+        }
+
+        .slide-content.delayed-3 {
+            transition-delay: 0.6s;
+        }
+
+        @media (max-width: 768px) {
+            .video-container {
+                width: 120px;
+                height: 120px;
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .slide h1 {
+                font-size: 2rem;
+            }
+            
+            .slide h2 {
+                font-size: 1.7rem;
+            }
+            
+            .slide p, .slide li {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 슬라이드 컨테이너 -->
+    <div class="slideshow-container">
+        <!-- 슬라이드 1: 인사말 -->
+        <div class="slide active">
+            <div class="slide-content">
+                <div class="medical-icon">🦷</div>
+                <h1>本日は大変な治療にもかかわらず<br>ご苦労様でした</h1>
+            </div>
+        </div>
+
+        <!-- 슬라이드 2: 제목 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="medical-icon">📋</div>
+                <h1>抜歯後の<br>注意事項</h1>
+            </div>
+            <div class="slide-content delayed-1">
+                <div class="highlight-box">
+                    <p>今日は歯を抜歯しましたので、<br>抜歯後の注意点についてご説明します</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 3: 거즈 물기 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="step-number">1</div>
+                <h2>ガーゼを噛む</h2>
+            </div>
+            <div class="slide-content delayed-1">
+                <div class="highlight-box">
+                    <p><strong>約2時間ガーゼを噛んでください</strong></p>
+                    <p>緩すぎると出血が再開することがあります</p>
+                </div>
+            </div>
+            <div class="slide-content delayed-2">
+                <div style="font-size: 3rem; margin: 30px 0;">🩸 → ❌</div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 4: 붓기와 멍 관리 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="step-number">2</div>
+                <h2>腫れとあざの管理</h2>
+            </div>
+            <div class="slide-content delayed-1">
+                <div class="highlight-box">
+                    <p><strong>腫れやあざができることがあります</strong></p>
+                </div>
+            </div>
+            <div class="slide-content delayed-2">
+                <ul>
+                    <li><strong>氷嚢を約1日間当ててください</strong></li>
+                    <li><strong>熱感がなくなったら、あざや腫れが続く場合は<br>温湿布を使用してください</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 슬라이드 5: 압력 금지 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="step-number">3</div>
+                <h2>口内の圧力を避ける</h2>
+            </div>
+            <div class="slide-content delayed-1">
+                <div class="warning-box">
+                    <p><strong>ストローを使うなど、<br>口の中に圧力をかける行動を<br>避けてください</strong></p>
+                </div>
+            </div>
+            <div class="slide-content delayed-2">
+                <div style="font-size: 3rem; margin: 30px 0;">🥤 → ❌</div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 6: 운동 및 사우나 금지 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="step-number">4</div>
+                <h2>激しい活動を避ける</h2>
+            </div>
+            <div class="slide-content delayed-1">
+                <div class="warning-box">
+                    <p><strong>数日間激しい運動やサウナを<br>控えてください</strong></p>
+                </div>
+            </div>
+            <div class="slide-content delayed-2">
+                <div style="font-size: 2.5rem; margin: 30px 0;">🏃‍♂️ 🧖‍♀️ → ❌</div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 7: 약물 복용 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="step-number">5</div>
+                <h2>薬の服用</h2>
+            </div>
+            <div class="slide-content delayed-1">
+                <div class="highlight-box">
+                    <p><strong>処方されたすべての薬を必ず服用し</strong></p>
+                    <p><strong>重篤な副作用が現れた場合は<br>病院に連絡してください</strong></p>
+                </div>
+            </div>
+            <div class="slide-content delayed-2">
+                <div style="font-size: 3rem; margin: 30px 0;">💊 ✓</div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 8: 술과 담배 금지 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="step-number">6</div>
+                <h2>お酒と喫煙を避ける</h2>
+            </div>
+            <div class="slide-content delayed-1">
+                <div class="warning-box">
+                    <p><strong>お酒や喫煙は<br>約1週間避けてください</strong></p>
+                </div>
+            </div>
+            <div class="slide-content delayed-2">
+                <div style="font-size: 3rem; margin: 30px 0;">🚭 🍺 → ❌</div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 9: 마무리 -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="medical-icon">💙</div>
+                <h2>本日はご努力ありがとうございました</h2>
+            </div>
+            <div class="slide-content delayed-1">
+                <div class="highlight-box">
+                    <p><strong>次回のご来院をお待ちしています</strong></p>
+                </div>
+            </div>
+            <div class="slide-content delayed-2">
+                <p style="margin-top: 40px; color: #7f8c8d;">健康な回復のため注意事項をお守りください 🏥</p>
+            </div>
+        </div>
+
+        <!-- 컨트롤 패널 -->
+        <div class="controls">
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="time-display">
+                <span id="currentTime">00:00</span> / <span id="totalTime">00:55</span>
+            </div>
+            <button class="btn play-btn" onclick="playVideo()" id="playBtn">▶ 再生</button>
+            <button class="btn pause-btn" onclick="pauseVideo()" id="pauseBtn" style="display:none;">⏸ 一時停止</button>
+            <button class="btn" onclick="resetVideo()">🔄 リセット</button>
+            <button class="btn" onclick="changeSlide(-1)">前へ</button>
+            <button class="btn" onclick="changeSlide(1)">次へ</button>
+        </div>
+    </div>
+
+    <!-- 작은 동그란 동영상 (오른쪽 하단) -->
+    <div class="video-container" id="videoContainer">
+        <video id="mainVideo">
+            <source src="video_japanese.mp4" type="video/mp4">
+            <source src="treatment_video_japanese.mp4" type="video/mp4">
+            <source src="dental_video_japanese.mp4" type="video/mp4">
+            <source src="video.mp4" type="video/mp4">
+            動画を再生できません。
+        </video>
+        <div class="video-overlay" id="videoOverlay">
+            <span id="playIcon">▶</span>
+        </div>
+    </div>
+
+    <script>
+        // 日本語字幕タイミングデータ（秒単位）
+        const subtitleTiming = [
+            { start: 0, end: 3.916, text: "本日は大変な治療にもかかわらず、ご苦労様でした。", slide: 0 },
+            { start: 3.916, end: 9.138, text: "今日は歯を抜歯しましたので、抜歯後の注意点についてご説明します。", slide: 1 },
+            { start: 9.138, end: 15.501, text: "まず、約2時間ガーゼを噛んでください。緩すぎると出血が再開することがあります。", slide: 2 },
+            { start: 15.501, end: 27.660, text: "次に、腫れやあざができることがあります。氷嚢を約1日間当ててください。熱感がなくなったら、あざや腫れが続く場合は温湿布を使用してください。", slide: 3 },
+            { start: 27.660, end: 33.535, text: "三つ目は、ストローを使うなど、口の中に圧力をかける行動を避けてください。", slide: 4 },
+            { start: 33.535, end: 37.777, text: "四つ目は、数日間激しい運動やサウナを控えてください。", slide: 5 },
+            { start: 37.777, end: 45.446, text: "五つ目は、処方されたすべての薬を必ず服用し、重篤な副作用が現れた場合は病院に連絡してください。", slide: 6 },
+            { start: 45.446, end: 49.036, text: "最後に、お酒や喫煙は約1週間避けてください。", slide: 7 },
+            { start: 49.036, end: 55.284, text: "本日はご努力ありがとうございました。次回のご来院をお待ちしています。", slide: 8 }
+        ];
+
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const video = document.getElementById('mainVideo');
+        const videoContainer = document.getElementById('videoContainer');
+        const playIcon = document.getElementById('playIcon');
+
+        // 動画イベントリスナー
+        video.addEventListener('loadedmetadata', function() {
+            const duration = Math.floor(video.duration);
+            const minutes = Math.floor(duration / 60);
+            const seconds = duration % 60;
+            document.getElementById('totalTime').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // 再生速度を1倍に設定（通常速度）
+            video.playbackRate = 1.0;
+        });
+
+        video.addEventListener('timeupdate', function() {
+            updateFromVideo();
+        });
+
+        video.addEventListener('play', function() {
+            document.getElementById('playBtn').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = 'inline-block';
+            videoContainer.classList.remove('paused');
+            playIcon.textContent = '⏸';
+        });
+
+        video.addEventListener('pause', function() {
+            document.getElementById('playBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
+            videoContainer.classList.add('paused');
+            playIcon.textContent = '▶';
+        });
+
+        video.addEventListener('ended', function() {
+            document.getElementById('playBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
+            videoContainer.classList.add('paused');
+            playIcon.textContent = '▶';
+        });
+
+        video.addEventListener('error', function() {
+            console.log('動画ファイルが見つかりません。');
+        });
+
+        // 動画コンテナクリックで再生/一時停止
+        videoContainer.addEventListener('click', function() {
+            if (video.paused) {
+                playVideo();
+            } else {
+                pauseVideo();
+            }
+        });
+
+        function updateFromVideo() {
+            const currentTime = video.currentTime;
+            
+            // プログレスバーの更新
+            if (video.duration) {
+                const progress = (currentTime / video.duration) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+            }
+            
+            // 時間表示の更新
+            const minutes = Math.floor(currentTime / 60);
+            const seconds = Math.floor(currentTime % 60);
+            document.getElementById('currentTime').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // 字幕およびスライドの更新
+            updateSubtitle(currentTime);
+        }
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+            currentSlideIndex = index;
+        }
+
+        function updateSubtitle(currentTime) {
+            const currentSubtitle = subtitleTiming.find(subtitle => 
+                currentTime >= subtitle.start && currentTime < subtitle.end
+            );
+
+            // スライド切り替えのみチェック
+            if (currentSubtitle && currentSubtitle.slide !== currentSlideIndex) {
+                showSlide(currentSubtitle.slide);
+            }
+        }
+
+        function playVideo() {
+            video.play();
+        }
+
+        function pauseVideo() {
+            video.pause();
+        }
+
+        function resetVideo() {
+            video.currentTime = 0;
+            video.pause();
+            currentSlideIndex = 0;
+            showSlide(0);
+        }
+
+        function changeSlide(direction) {
+            const newIndex = currentSlideIndex + direction;
+            if (newIndex >= 0 && newIndex < totalSlides) {
+                showSlide(newIndex);
+                
+                // 該当スライドの時間に動画を移動
+                const slideSubtitle = subtitleTiming.find(subtitle => subtitle.slide === newIndex);
+                if (slideSubtitle) {
+                    video.currentTime = slideSubtitle.start;
+                }
+            }
+        }
+
+        // プログレスバークリックで時間移動
+        document.getElementById('progressBar').addEventListener('click', function(e) {
+            if (video.duration) {
+                const rect = this.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const percentage = clickX / rect.width;
+                video.currentTime = percentage * video.duration;
+            }
+        });
+
+        // キーボードナビゲーション
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (event.key === 'ArrowRight') {
+                changeSlide(1);
+            } else if (event.key === ' ') {
+                event.preventDefault();
+                if (video.paused) {
+                    playVideo();
+                } else {
+                    pauseVideo();
+                }
+            } else if (event.key === 'r' || event.key === 'R') {
+                resetVideo();
+            }
+        });
+
+        // 初期設定
+        showSlide(0);
+        videoContainer.classList.add('paused');
+    </script>
+</body>
+</html>
